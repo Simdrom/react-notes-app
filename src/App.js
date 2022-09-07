@@ -13,17 +13,17 @@ import "./App.css";
 
 const App = () => {
   const [notes, setNotes] = useState([
-    { title: "Title 0", content: "Content 0", id: 0 },
-    { title: "Title 1", content: "Content 1", id: 1 },
-    { title: "Title 2", content: "Content 2", id: 2 },
+    // { title: "Title 0", content: "Content 0", id: 0 },
+    // { title: "Title 1", content: "Content 1", id: 1 },
+    // { title: "Title 2", content: "Content 2", id: 2 },
   ]);
   const [showCreationNotes, setShowCreationNotes] = useState(false);
   const [showCustomAlert, setShowCustomAlert] = useState(false);
   const [customAlertProperties, setCustomAlertProperties] = useState({});
 
-  useEffect(() => {
-    setShowCreationNotes(true);
-  }, [setShowCreationNotes]);
+  // useEffect(() => {
+  //   setShowCreationNotes(true);
+  // }, [setShowCreationNotes]);
 
   return (
     <Container>
