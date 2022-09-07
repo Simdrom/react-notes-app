@@ -35,6 +35,7 @@ const NoteCreation = (props) => {
     const note = {
       title: enteredTitle,
       content: enteredContent,
+      creation: new Date(),
       id: lengthNotes,
     };
     notesCopy.push(note);
