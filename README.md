@@ -13,5 +13,7 @@ Run `npm i` to install all dependencies then `npm start`
 
 ### Images
 
-![Screenshot0](Screenshot0.png)
-![Screenshot1](Screenshot1.png)
+![Screenshot of the welcoming banner](Screenshot0.png)
+![Screenshot of the app running with some notes](Screenshot1.png)
+![Screenshot of the new note form](Screenshot_CreateNote.png)
+![Screenshot of the edit note form](Screenshot_EditNote.png)
