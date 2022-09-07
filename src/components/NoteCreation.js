@@ -1,18 +1,25 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
+
+import ReactMarkdown from "react-markdown";
+import SyntaxHighlighter from "react-syntax-highlighter";
 
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 
+import { docco } from "react-syntax-highlighter/dist/esm/styles/hljs";
+import { Row, Container } from "react-bootstrap";
+
 const NoteCreation = (props) => {
   const titleInputRef = useRef();
   const contentInputRef = useRef();
+  const [markdownInput, setMarkdownInput] = useState();
 
   const createNoteHandler = (event) => {
     event.preventDefault();
     const enteredTitle = titleInputRef.current.value;
-    const enteredContent = contentInputRef.current.value;
+    const enteredContent = markdownInput;
     const notesCopy = [...props.notes];
     if (
       enteredTitle === null ||
@@ -59,12 +66,30 @@ const NoteCreation = (props) => {
 
           <Form.Group className="mb-3">
             <Form.Label>Note content</Form.Label>
-            <Form.Control
-              as="textarea"
-              placeholder="Enter note Content"
-              ref={contentInputRef}
-              style={{ height: "100px" }}
-            />
+
+            <Container>
+              <Row>
+                <Form.Control
+                  as="textarea"
+                  placeholder="Enter note Content"
+                  ref={contentInputRef}
+                  style={{ height: "100px" }}
+                  onChange={(e) => {
+                    setMarkdownInput(e.target.value);
+                  }}
+                />
+              </Row>
+              <Row>
+                <Form.Label>
+                  <ReactMarkdown
+                    children={markdownInput}
+                    components={{
+                      code: MarkComponent,
+                    }}
+                  />
+                </Form.Label>
+              </Row>
+            </Container>
           </Form.Group>
           <ButtonGroup aria-label="Basic example">
             <Button
@@ -91,3 +116,11 @@ const NoteCreation = (props) => {
 };
 
 export default NoteCreation;
+
+const MarkComponent = ({ value, language }) => {
+  return (
+    <SyntaxHighlighter language={language ?? null} style={docco}>
+      {value ?? ""}
+    </SyntaxHighlighter>
+  );
+};

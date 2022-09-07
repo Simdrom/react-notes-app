@@ -5,10 +5,16 @@ import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Form from "react-bootstrap/Form";
 
+import ReactMarkdown from "react-markdown";
+import SyntaxHighlighter from "react-syntax-highlighter";
+
+import { docco } from "react-syntax-highlighter/dist/esm/styles/hljs";
+
 const NoteDetails = (props) => {
   const [enableEdit, setEnableEdit] = useState(false);
   const titleChangeRef = useRef();
   const contentChangeRef = useRef();
+  const [markdownInput, setMarkdownInput] = useState();
 
   const handleDeleteNote = () => {
     props.setNotes(
@@ -19,7 +25,7 @@ const NoteDetails = (props) => {
     event.preventDefault();
 
     const titleChanged = titleChangeRef.current.value;
-    const contentChanged = contentChangeRef.current.value;
+    const contentChanged = markdownInput;
 
     if (
       titleChanged === null ||
@@ -60,7 +66,14 @@ const NoteDetails = (props) => {
         <Card.Subtitle className="mb-2 text-muted">
           {getDateString(props.note.creation)}
         </Card.Subtitle>
-        {!enableEdit && <Card.Text>{props.note.content}</Card.Text>}
+        {!enableEdit && (
+          <ReactMarkdown
+            children={props.note.content}
+            components={{
+              code: MarkComponent,
+            }}
+          />
+        )}
         {enableEdit && (
           <Form>
             <Form.Group className="mb-3">
@@ -81,7 +94,19 @@ const NoteDetails = (props) => {
                 style={{ height: "100px" }}
                 ref={contentChangeRef}
                 defaultValue={props.note.content}
+                onChange={(e) => {
+                  setMarkdownInput(e.target.value);
+                }}
               />
+
+              <Form.Label>
+                <ReactMarkdown
+                  children={markdownInput}
+                  components={{
+                    code: MarkComponent,
+                  }}
+                />
+              </Form.Label>
             </Form.Group>
             <ButtonGroup aria-label="Basic example">
               <Button
@@ -156,4 +181,12 @@ const getDateString = (dateD) => {
   const dayName = days[d.getDay()]; // Thu
   const formatted = `${dayName}, ${date} ${monthName} ${year}`;
   return `${formatted}`;
+};
+
+const MarkComponent = ({ value, language }) => {
+  return (
+    <SyntaxHighlighter language={language ?? null} style={docco}>
+      {value ?? ""}
+    </SyntaxHighlighter>
+  );
 };
