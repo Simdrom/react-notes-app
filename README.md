@@ -10,3 +10,8 @@ You can
 
 ### Installation
 Run `npm i` to install all dependencies then `npm start`
+
+### Images
+
+![Screenshot0](Screenshot0.png)
+![Screenshot1](Screenshot1.png)
