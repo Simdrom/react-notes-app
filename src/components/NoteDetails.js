@@ -17,32 +17,49 @@ const NoteDetails = (props) => {
   };
   const handleEditNote = (event) => {
     event.preventDefault();
+
     const titleChanged = titleChangeRef.current.value;
     const contentChanged = contentChangeRef.current.value;
-    console.log(
-      `titleChanged: ${titleChanged} and contentChanged: ${contentChanged} `
-    );
+
+    if (
+      titleChanged === null ||
+      titleChanged === "" ||
+      typeof titleChanged === "undefined" ||
+      contentChanged === null ||
+      contentChanged === "" ||
+      typeof contentChanged === "undefined"
+    ) {
+      props.setCustomAlertProperties({
+        variant: "danger",
+        message: "Title or Content cannot be empty",
+      });
+      props.setShowCustomAlert(true);
+      return;
+    }
+
     const noteToChange = [...props.notes].filter(
       (note) => note.id === props.note.id
     );
     const noteChanged = [...noteToChange].at(0);
     noteChanged.title = titleChanged;
     noteChanged.content = contentChanged;
-    console.log(`noteChanged: ${JSON.stringify(noteChanged)}`);
+    noteChanged.creation = new Date();
 
     const newNotesArrayWithoutChanged = [...props.notes].filter(
       (note) => note.id !== props.note.id
     );
     props.setNotes([...newNotesArrayWithoutChanged, noteChanged]);
-    console.log(
-      `new array: ${JSON.stringify([newNotesArrayWithoutChanged, noteChanged])}`
-    );
+
     setEnableEdit(false);
   };
+
   return (
     <Card>
       <Card.Body>
         {!enableEdit && <Card.Title>{props.note.title}</Card.Title>}
+        <Card.Subtitle className="mb-2 text-muted">
+          {getDateString(props.note.creation)}
+        </Card.Subtitle>
         {!enableEdit && <Card.Text>{props.note.content}</Card.Text>}
         {enableEdit && (
           <Form>
@@ -52,6 +69,7 @@ const NoteDetails = (props) => {
                 type="text"
                 placeholder={props.note.title}
                 ref={titleChangeRef}
+                defaultValue={props.note.title}
               />
             </Form.Group>
 
@@ -62,6 +80,7 @@ const NoteDetails = (props) => {
                 placeholder={props.note.content}
                 style={{ height: "100px" }}
                 ref={contentChangeRef}
+                defaultValue={props.note.content}
               />
             </Form.Group>
             <ButtonGroup aria-label="Basic example">
@@ -89,7 +108,6 @@ const NoteDetails = (props) => {
             <Button
               variant="outline-secondary"
               onClick={() => {
-                console.log("Edit clicked");
                 setEnableEdit(true);
               }}
             >
@@ -114,3 +132,28 @@ const NoteDetails = (props) => {
 };
 
 export default NoteDetails;
+const getDateString = (dateD) => {
+  const d = new Date(dateD);
+  const year = d.getFullYear(); // 2019
+  const date = d.getDate();
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+  const monthIndex = d.getMonth();
+  const monthName = months[monthIndex];
+  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const dayName = days[d.getDay()]; // Thu
+  const formatted = `${dayName}, ${date} ${monthName} ${year}`;
+  return `${formatted}`;
+};
