@@ -8,5 +8,5 @@ You can
 *   [x] Data storage in browser.
 *   [x] Markdown compability in note's body .
 
-### Instalation
+### Installation
 Run `npm i` to install all dependencies then `npm start`
