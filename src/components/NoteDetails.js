@@ -1,19 +1,16 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Form from "react-bootstrap/Form";
 
-import ReactMarkdown from "react-markdown";
-import SyntaxHighlighter from "react-syntax-highlighter";
-
 import { docco } from "react-syntax-highlighter/dist/esm/styles/hljs";
+import MarkdownPreviewer from "./MarkdownPreviewer";
 
 const NoteDetails = (props) => {
   const [enableEdit, setEnableEdit] = useState(false);
   const titleChangeRef = useRef();
-  const contentChangeRef = useRef();
   const [markdownInput, setMarkdownInput] = useState();
 
   const handleDeleteNote = () => {
@@ -59,19 +56,21 @@ const NoteDetails = (props) => {
     setEnableEdit(false);
   };
 
+  useEffect(() => {
+    if (typeof markdownInput === "undefined")
+      setMarkdownInput(props.note.content);
+  }, [props.note.content, markdownInput]);
+
   return (
     <Card>
       <Card.Body>
+        {enableEdit && <Card.Title>Edit note</Card.Title>}
         {!enableEdit && <Card.Title>{props.note.title}</Card.Title>}
-        <Card.Subtitle className="mb-2 text-muted">
-          {getDateString(props.note.creation)}
-        </Card.Subtitle>
+
         {!enableEdit && (
-          <ReactMarkdown
-            children={props.note.content}
-            components={{
-              code: MarkComponent,
-            }}
+          <MarkdownPreviewer
+            markdownInput={props.note.content}
+            disabled={false}
           />
         )}
         {enableEdit && (
@@ -92,22 +91,14 @@ const NoteDetails = (props) => {
                 as="textarea"
                 placeholder={props.note.content}
                 style={{ height: "100px" }}
-                ref={contentChangeRef}
                 defaultValue={props.note.content}
                 onChange={(e) => {
                   setMarkdownInput(e.target.value);
                 }}
               />
-
-              <Form.Label>
-                <ReactMarkdown
-                  children={markdownInput}
-                  components={{
-                    code: MarkComponent,
-                  }}
-                />
-              </Form.Label>
             </Form.Group>
+
+            <MarkdownPreviewer markdownInput={markdownInput} disabled={true} />
             <ButtonGroup aria-label="Basic example">
               <Button
                 variant="outline-primary"
@@ -128,6 +119,7 @@ const NoteDetails = (props) => {
             </ButtonGroup>
           </Form>
         )}
+        <p></p>
         {!enableEdit && (
           <ButtonGroup aria-label="Basic example">
             <Button
@@ -152,6 +144,11 @@ const NoteDetails = (props) => {
           </ButtonGroup>
         )}
       </Card.Body>
+      <Card.Footer>
+        <small className="text-muted">
+          Created {getDateString(props.note.creation)}
+        </small>
+      </Card.Footer>
     </Card>
   );
 };
@@ -181,12 +178,4 @@ const getDateString = (dateD) => {
   const dayName = days[d.getDay()]; // Thu
   const formatted = `${dayName}, ${date} ${monthName} ${year}`;
   return `${formatted}`;
-};
-
-const MarkComponent = ({ value, language }) => {
-  return (
-    <SyntaxHighlighter language={language ?? null} style={docco}>
-      {value ?? ""}
-    </SyntaxHighlighter>
-  );
 };

@@ -3,6 +3,6 @@
   min-height: 40rem;
 }
 
-.creation-note {
+.card {
   margin-top: calc(0.5 * var(--bs-gutter-x)) !important;
 }

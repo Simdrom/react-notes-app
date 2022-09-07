@@ -1,19 +1,14 @@
 import { useRef, useState } from "react";
 
-import ReactMarkdown from "react-markdown";
-import SyntaxHighlighter from "react-syntax-highlighter";
-
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
-
-import { docco } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import { Row, Container } from "react-bootstrap";
+import MarkdownPreviewer from "./MarkdownPreviewer";
 
 const NoteCreation = (props) => {
   const titleInputRef = useRef();
-  const contentInputRef = useRef();
   const [markdownInput, setMarkdownInput] = useState();
 
   const createNoteHandler = (event) => {
@@ -72,7 +67,6 @@ const NoteCreation = (props) => {
                 <Form.Control
                   as="textarea"
                   placeholder="Enter note Content"
-                  ref={contentInputRef}
                   style={{ height: "100px" }}
                   onChange={(e) => {
                     setMarkdownInput(e.target.value);
@@ -80,14 +74,7 @@ const NoteCreation = (props) => {
                 />
               </Row>
               <Row>
-                <Form.Label>
-                  <ReactMarkdown
-                    children={markdownInput}
-                    components={{
-                      code: MarkComponent,
-                    }}
-                  />
-                </Form.Label>
+                <MarkdownPreviewer markdownInput={markdownInput} />
               </Row>
             </Container>
           </Form.Group>
@@ -116,11 +103,3 @@ const NoteCreation = (props) => {
 };
 
 export default NoteCreation;
-
-const MarkComponent = ({ value, language }) => {
-  return (
-    <SyntaxHighlighter language={language ?? null} style={docco}>
-      {value ?? ""}
-    </SyntaxHighlighter>
-  );
-};
