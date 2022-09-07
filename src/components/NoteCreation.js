@@ -1,18 +1,20 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
+import { Row, Container } from "react-bootstrap";
+import MarkdownPreviewer from "./MarkdownPreviewer";
 
 const NoteCreation = (props) => {
   const titleInputRef = useRef();
-  const contentInputRef = useRef();
+  const [markdownInput, setMarkdownInput] = useState();
 
   const createNoteHandler = (event) => {
     event.preventDefault();
     const enteredTitle = titleInputRef.current.value;
-    const enteredContent = contentInputRef.current.value;
+    const enteredContent = markdownInput;
     const notesCopy = [...props.notes];
     if (
       enteredTitle === null ||
@@ -59,12 +61,22 @@ const NoteCreation = (props) => {
 
           <Form.Group className="mb-3">
             <Form.Label>Note content</Form.Label>
-            <Form.Control
-              as="textarea"
-              placeholder="Enter note Content"
-              ref={contentInputRef}
-              style={{ height: "100px" }}
-            />
+
+            <Container>
+              <Row>
+                <Form.Control
+                  as="textarea"
+                  placeholder="Enter note Content"
+                  style={{ height: "100px" }}
+                  onChange={(e) => {
+                    setMarkdownInput(e.target.value);
+                  }}
+                />
+              </Row>
+              <Row>
+                <MarkdownPreviewer markdownInput={markdownInput} />
+              </Row>
+            </Container>
           </Form.Group>
           <ButtonGroup aria-label="Basic example">
             <Button

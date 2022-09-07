@@ -1,14 +1,17 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Form from "react-bootstrap/Form";
 
+import { docco } from "react-syntax-highlighter/dist/esm/styles/hljs";
+import MarkdownPreviewer from "./MarkdownPreviewer";
+
 const NoteDetails = (props) => {
   const [enableEdit, setEnableEdit] = useState(false);
   const titleChangeRef = useRef();
-  const contentChangeRef = useRef();
+  const [markdownInput, setMarkdownInput] = useState();
 
   const handleDeleteNote = () => {
     props.setNotes(
@@ -19,7 +22,7 @@ const NoteDetails = (props) => {
     event.preventDefault();
 
     const titleChanged = titleChangeRef.current.value;
-    const contentChanged = contentChangeRef.current.value;
+    const contentChanged = markdownInput;
 
     if (
       titleChanged === null ||
@@ -53,14 +56,23 @@ const NoteDetails = (props) => {
     setEnableEdit(false);
   };
 
+  useEffect(() => {
+    if (typeof markdownInput === "undefined")
+      setMarkdownInput(props.note.content);
+  }, [props.note.content, markdownInput]);
+
   return (
     <Card>
       <Card.Body>
+        {enableEdit && <Card.Title>Edit note</Card.Title>}
         {!enableEdit && <Card.Title>{props.note.title}</Card.Title>}
-        <Card.Subtitle className="mb-2 text-muted">
-          {getDateString(props.note.creation)}
-        </Card.Subtitle>
-        {!enableEdit && <Card.Text>{props.note.content}</Card.Text>}
+
+        {!enableEdit && (
+          <MarkdownPreviewer
+            markdownInput={props.note.content}
+            disabled={false}
+          />
+        )}
         {enableEdit && (
           <Form>
             <Form.Group className="mb-3">
@@ -79,10 +91,14 @@ const NoteDetails = (props) => {
                 as="textarea"
                 placeholder={props.note.content}
                 style={{ height: "100px" }}
-                ref={contentChangeRef}
                 defaultValue={props.note.content}
+                onChange={(e) => {
+                  setMarkdownInput(e.target.value);
+                }}
               />
             </Form.Group>
+
+            <MarkdownPreviewer markdownInput={markdownInput} disabled={true} />
             <ButtonGroup aria-label="Basic example">
               <Button
                 variant="outline-primary"
@@ -103,6 +119,7 @@ const NoteDetails = (props) => {
             </ButtonGroup>
           </Form>
         )}
+        <p></p>
         {!enableEdit && (
           <ButtonGroup aria-label="Basic example">
             <Button
@@ -127,6 +144,11 @@ const NoteDetails = (props) => {
           </ButtonGroup>
         )}
       </Card.Body>
+      <Card.Footer>
+        <small className="text-muted">
+          Created {getDateString(props.note.creation)}
+        </small>
+      </Card.Footer>
     </Card>
   );
 };

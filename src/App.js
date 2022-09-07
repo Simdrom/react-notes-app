@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
+import { Row } from "react-bootstrap";
 
 import MainNavbar from "./components/MainNavbar";
 import WelcomeBanner from "./components/WelcomeBanner";
@@ -40,22 +40,25 @@ const App = () => {
           />
         </Row>
       )}
-      <Row xs={1} md={2} className="g-1">
-        {notes.map((note, index) => {
-          return (
-            <NoteDetails
-              note={note}
-              key={index}
-              setShowCreationNotes={setShowCreationNotes}
-              showCreationNotes={showCreationNotes}
-              setShowCustomAlert={setShowCustomAlert}
-              setNotes={setNotes}
-              notes={notes}
-              setCustomAlertProperties={setCustomAlertProperties}
-            />
-          );
-        })}
-      </Row>
+
+      <Container fluid>
+        <Row xs={1} md={3}>
+          {notes.map((note, index) => {
+            return (
+              <NoteDetails
+                note={note}
+                key={index}
+                setShowCreationNotes={setShowCreationNotes}
+                showCreationNotes={showCreationNotes}
+                setShowCustomAlert={setShowCustomAlert}
+                setNotes={setNotes}
+                notes={notes}
+                setCustomAlertProperties={setCustomAlertProperties}
+              />
+            );
+          })}
+        </Row>
+      </Container>
 
       <Row className="creation-note g-1" xs={1} md={2}>
         {showCreationNotes && (
